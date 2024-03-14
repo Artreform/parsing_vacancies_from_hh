@@ -1,0 +1,24 @@
+{
+  "config": {
+    "api": {
+      "base_url": "https://api.hh.ru/vacancies",
+      "search_params": {
+        "text": "NAME:\"Data engineer\" or \"BI разработчик\"",
+        "area": 1,
+        "per_page": 100,
+        "page": 0
+      }
+    },
+    "paths": {
+      "csv_folder": "/tmp/csv",
+      "cache_dir": "/tmp/cache"
+    },
+    "database": {
+      "tables": {
+        "vacancies": "CREATE TABLE IF NOT EXISTS vacancies (id INT, created_at TIMESTAMP, name VARCHAR(255), employer VARCHAR(255), format VARCHAR(50), experience TEXT, description TEXT, link TEXT);",
+        "skills": "CREATE TABLE IF NOT EXISTS skills (id INT, skill VARCHAR(255));",
+        "salaries": "CREATE TABLE IF NOT EXISTS salaries (id INT, salary_from FLOAT, salary_to FLOAT);"
+      }
+    }
+  }
+}

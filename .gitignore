@@ -1,0 +1,9 @@
+**/airflow_data/logs
+
+**/airflow_data/plugins
+
+**/airflow_data/_pycache_/
+
+**/dwh_data/
+
+**/pgadmin_data/
