@@ -172,10 +172,10 @@ def collect_data():
 
     create_and_truncate = create_tables() >> truncate_tables(CONFIG["database"]["tables"].keys())
     vacansies_list = fetch_vacancies_list(CONFIG['api']['base_url'], CONFIG['api']['search_params'])
+    vacansies_list.set_upstream(create_and_truncate)
     vacancies_details = fetch_vacancy_details(vacansies_list)
     filepath_e = save_to_csv(vacancies_details)
     load_to_db = load_to_db(filepath_e)
-
-    create_and_truncate >> vacansies_list >> vacancies_details >> filepath_e >> load_to_db >> trigger_load_core_data
+    trigger_load_core_data.set_upstream(load_to_db)
 
 dag = collect_data()
