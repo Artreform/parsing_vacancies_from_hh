@@ -15,8 +15,9 @@ TG_CONN_ID = 'vacancies_bot'
 TG_HOOK = TelegramHook(telegram_conn_id=TG_CONN_ID)
 
 
-def clean_cache(vacancies_list):
-    """Очистка кэша от неактуальных вакансий"""
+def clean_cache(vacancies_list: list) -> None:
+    """Cleaning cache folder from irrelevant vacancies"""
+
     actual_vacancies = [vacancy['id'] for vacancy in vacancies_list]
     cache_dir = Path(CONFIG["paths"]['cache_dir'])
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -29,28 +30,31 @@ def clean_cache(vacancies_list):
                 vac_del_cnt += 1
     print(f"Удалено {vac_del_cnt} файлов из кэша - (вакансии неактуальны)")
 
-def cache_vac(vacancy_id, vacancy_detail):
-    """Сохраняет детали вакансии в файл кэша"""
+def cache_vac(vacancy_id: str, vacancy_detail: dict) -> None:
+    """Saving vacancies to the cache folder"""
+
     cache_dir = Path(CONFIG["paths"]['cache_dir'])
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_file = cache_dir / f"{vacancy_id}.json"
     cache_file.write_text(json.dumps(vacancy_detail, ensure_ascii=False, indent=4))
 
-def load_from_cache(vacancy_id):
-    """Загружает детали вакансии из файла кэша, если они там есть."""
+def load_from_cache(vacancy_id: str) -> None:
+    """Load vacancy details from cache"""
+
     cache_dir = Path(CONFIG["paths"]['cache_dir'])
     cache_file = cache_dir / f"{vacancy_id}.json"
     if cache_file.exists():
         return json.loads(cache_file.read_text())
-    return None
 
-def clean_tags(html_text):
-    """Функция для очистки HTML-тегов"""
+def clean_tags(html_text: str) -> str:
+    """Cleaning HTML tags"""
+
     pattern = re.compile('<.*?>')
     return re.sub(pattern, '', html_text)
 
-def convert_gross(salary, is_gross: bool):
-    """Конвертация ЗП в чистый доход"""
+def convert_gross(salary: float, is_gross: bool) -> float:
+    """Converting salary from gross to net"""
+
     if is_gross:
         salary_net = salary * 0.87
     else:

@@ -7,3 +7,5 @@
 **/dwh_data/
 
 **/pgadmin_data/
+
+.DS_Store

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from config_file import DWH_HOOK, TG_HOOK
 import time
 
+
 default_args = {
     'depends_on_past': False,
     "start_date": datetime(2024, 3, 13),
@@ -14,8 +15,9 @@ default_args = {
 def tg_vacancy_notifier():
 
     @task()
-    def fetch_vacancies():
-        """Извлечение вакансий из базы данных"""
+    def fetch_vacancies() -> list:
+        """Fetch vacancies from DWH within today"""
+
         cur_date = datetime.now().date()
         sql = f"""
         SELECT v.name, v.employer, v.experience, v.format, v.link, coalesce(STRING_AGG(s.skill, ', '), 'Не указаны') as skills
@@ -28,8 +30,9 @@ def tg_vacancy_notifier():
         return vacancies
 
     @task()
-    def send_messages(vacancies):
-        """Отправка сообщений с вакансиями"""
+    def send_messages(vacancies: list) -> None:
+        """Send message with actual vacancies"""
+
         cur_date = datetime.now().strftime('%d.%m.%Y')
         if not vacancies:
             TG_HOOK.send_message({

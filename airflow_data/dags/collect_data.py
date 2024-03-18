@@ -25,13 +25,15 @@ def collect_data():
 
     @task()
     def create_tables():
-        """Создание таблиц в БД"""
+        """Creating tables in Database"""
+
         for create_stmt in CONFIG["database"]["tables"].values():
             DWH_HOOK.run(create_stmt)
 
     @task()
-    def truncate_tables(tables):
-        """Очистка таблиц перед загрузкой"""
+    def truncate_tables(tables: list) -> None:
+        """Cleaning tables before insert data"""
+
         for table in tables:
             sql = f"TRUNCATE TABLE {table};"
             try:
@@ -41,8 +43,9 @@ def collect_data():
                 print(f"Ошибка при очистке {table}: {e}")
     
     @task()
-    def fetch_vacancies_list(url, search_params):
-        """Получение страниц с вакансиями"""
+    def fetch_vacancies_list(url: str, search_params: dict) -> list[dict]:
+        """Getting pages with vacancies"""
+
         vacancies_list = []
         pages_cnt = 0
         while True:
@@ -63,8 +66,9 @@ def collect_data():
     
 
     @task()
-    def fetch_vacancy_details(vacancies_list):
-        """Получение информации по каждой вакансии"""
+    def fetch_vacancy_details(vacancies_list: list[dict]) -> dict:
+        """Getting vacancy details from the list of vacancies"""
+
         vacancies_cnt = 0
         vac_api = 0
         vac_cache = 0
@@ -134,7 +138,9 @@ def collect_data():
         return vacancies_details
     
     @task
-    def save_to_csv(data):
+    def save_to_csv(data: dict) -> dict:
+        """Export data with vacancies into csv files"""
+
         csv_dir = Path(CONFIG['paths']['csv_folder'])
         csv_dir.mkdir(parents=True, exist_ok=True)
         file_paths = {}
@@ -147,7 +153,9 @@ def collect_data():
         return file_paths
 
     @task
-    def load_to_db(filepaths):
+    def load_to_db(filepaths: dict) -> None:
+        """Load data from CSV into DWH"""
+
         for table, file_path in filepaths.items():
             df = pd.read_csv(file_path)
             df.to_sql(table, DWH_HOOK.get_sqlalchemy_engine(), schema='public', if_exists='append', index=False)
