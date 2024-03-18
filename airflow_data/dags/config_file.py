@@ -38,13 +38,15 @@ def cache_vac(vacancy_id: str, vacancy_detail: dict) -> None:
     cache_file = cache_dir / f"{vacancy_id}.json"
     cache_file.write_text(json.dumps(vacancy_detail, ensure_ascii=False, indent=4))
 
-def load_from_cache(vacancy_id: str) -> None:
+def load_from_cache(vacancy_id: str):
     """Load vacancy details from cache"""
 
     cache_dir = Path(CONFIG["paths"]['cache_dir'])
     cache_file = cache_dir / f"{vacancy_id}.json"
     if cache_file.exists():
         return json.loads(cache_file.read_text())
+    else:
+        return None
 
 def clean_tags(html_text: str) -> str:
     """Cleaning HTML tags"""
